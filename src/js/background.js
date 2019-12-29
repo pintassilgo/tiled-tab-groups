@@ -310,7 +310,7 @@ async function setStash(windowId, groupId, state, now = false) {
 		}
 
 		// If the group is being stashed, unload all tabs in the group.
-		if (state) {
+		if (state && CONFIG.unstashOnTabLoad) {
 			let array = [];
 
 			await CACHE.forEach(function (tab) {
@@ -493,7 +493,7 @@ async function onActivated(tab, info) {
 	let group = getGroup(windowId, groupId);
 	if (group == null) return;
 
-	if (group.stash == true) {
+	if (group.stash == true && CONFIG.unstashOnTabLoad) {
 		await setStash(windowId, groupId, false, true);
 	}
 
