@@ -562,7 +562,7 @@ async function onUpdated(tab, info) {
 		let group = getGroup(tab.windowId, groupId);
 		if (group == null) return;
 
-		if (group.stash == true) {
+		if (group.stash == true && CONFIG.unstashOnTabLoad) {
 			await setStash(tab.windowId, groupId, false, true);
 		}
 	}

@@ -26,7 +26,7 @@ function makeGroupNode(group) {
 		, title: 'Unload tabs in this group.'
 	, });
 	var stash = new_element('div', {
-		class: 'icon icon-stash'
+		class: 'icon ' + (group.stash ? 'icon-unstash' : 'icon-stash')
 		, title: 'Stash this group. Unloads all tabs in the group.'
 	, });
 	var close = new_element('div', {
@@ -65,6 +65,10 @@ function makeGroupNode(group) {
 	Object.assign(node.style, {
 		willChange: 'transform'
 	, });
+
+	if (group.stash) {
+		node.style.backgroundColor = 'hsla(0, 100%, 50%, 0.1)';
+	}
 
 	groupNodes[group.id] = {
 		group: node
@@ -119,21 +123,25 @@ function makeGroupNode(group) {
 	stash.addEventListener('click', async function (event) {
 		event.stopPropagation();
 
-		var groupUnloaded = true;
+		if (group.stash) {
+			bgPage.setStash(WINDOW_ID, group.id, false);
+		} else {
+			var groupUnloaded = true;
 
-		await TABINTERFACE.forEach(function (tab) {
-			if (!tab.discarded && !tab.pinned) {
-				groupUnloaded = false;
-			}
-			}, WINDOW_ID,
-			function (tab) {
-				return group.id == TABINTERFACE.getGroupId(tab.id)
-			}
-		);
+			await TABINTERFACE.forEach(function (tab) {
+				if (!tab.discarded && !tab.pinned) {
+					groupUnloaded = false;
+				}
+				}, WINDOW_ID,
+				function (tab) {
+					return group.id == TABINTERFACE.getGroupId(tab.id)
+				}
+			);
 
-		if (groupUnloaded || window.confirm(`Stash group ${group.name}?\n` +
-				`Stashed groups can be retrieved from the popup panel.`)) {
-			bgPage.setStash(WINDOW_ID, group.id, true);
+			if (groupUnloaded || window.confirm(`Stash group ${group.name}?\n` +
+					`Stashed groups can be retrieved from the popup panel.`)) {
+				bgPage.setStash(WINDOW_ID, group.id, true);
+			}
 		}
 
 	}, false);
@@ -158,7 +166,7 @@ function makeGroupNode(group) {
 
 	}, false);
 
-	let parent = group.stash ? view.stashNode : view.groupsNode;
+	let parent = group.stash && unstashOnTabLoad ? view.stashNode : view.groupsNode;
 	parent.appendChild(groupNodes[group.id].group);
 }
 
@@ -171,7 +179,7 @@ async function fillGroupNodes() {
 	let pinFrag = document.createDocumentFragment();
 
 	await GRPINTERFACE.forEach(async function (group) {
-		if (group.stash) return;
+		if (group.stash && unstashOnTabLoad) return;
 		if (groupNodes[group.id] == null) {
 			makeGroupNode(group);
 		}
@@ -207,7 +215,7 @@ async function fillGroupNodes() {
 
 function reorderGroup(groupId) {
 	let group = GRPINTERFACE.get(groupId);
-	if (group.stash == true) {
+	if (group.stash == true && unstashOnTabLoad) {
 		return;
 	}
 

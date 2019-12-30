@@ -5,6 +5,7 @@ var use_tst_indent = false;
 var use_tst_move = false;
 var use_tst_tree_close = false;
 var use_ftt;
+var unstashOnTabLoad;
 
 var view = {
 	windowId: -1
@@ -72,6 +73,7 @@ async function initView() {
 			use_tst_move = pValue.use_tst_move || false;
 			use_tst_tree_close = pValue.use_tst_tree_close || false;
 			use_ftt = pValue.ftt || false;
+			unstashOnTabLoad = pValue.unstashOnTabLoad;
 			if (pValue.light_theme) {
 				appendCSSFile('css/color-light.css');
 			}
@@ -87,7 +89,7 @@ async function initView() {
 		let groupId = await TABINTERFACE.getGroupId(tab.id);
 
 		if (groupId == -1 || GRPINTERFACE.get(groupId) == null ||
-			GRPINTERFACE.get(groupId).stash) {
+			(GRPINTERFACE.get(groupId).stash && unstashOnTabLoad)) {
 			return;
 		}
 
@@ -170,7 +172,7 @@ async function initView() {
 document.addEventListener('DOMContentLoaded', initView, false);
 
 function onCreated(tab, groupId) {
-	if (GRPINTERFACE.get(groupId).stash) {
+	if (GRPINTERFACE.get(groupId).stash && unstashOnTabLoad) {
 		return;
 	}
 
@@ -231,7 +233,7 @@ function onUpdated(tab, info) {
 	else {
 		let groupId = TABINTERFACE.getGroupId(tab.id);
 		let grp = GRPINTERFACE.get(groupId);
-		if (groupId == -1 || (grp != null && grp.stash)) {
+		if (groupId == -1 || (grp != null && grp.stash && unstashOnTabLoad)) {
 			if ('pinned' in info) {
 				deleteTabNode(tab.id);
 			}
@@ -248,7 +250,24 @@ function onUpdated(tab, info) {
 }
 
 function onStashed(groupId) {
-	if (GRPINTERFACE.get(groupId).stash == true) {
+	let stashed = GRPINTERFACE.get(groupId).stash;
+	if (!unstashOnTabLoad) {
+		let groupNode = groupNodes[groupId].group;
+		let stashNode = groupNode.firstChild.getElementsByTagName('div')[1];
+		if (stashed) {
+			setNodeClass(stashNode, 'icon-stash', false);
+			setNodeClass(stashNode, 'icon-unstash', true);
+			groupNode.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
+		}
+		else {
+			setNodeClass(stashNode, 'icon-stash', true);
+			setNodeClass(stashNode, 'icon-unstash', false);
+			groupNode.style.backgroundColor = '';
+		}
+		return;
+	}
+
+	if (stashed == true) {
 		TABINTERFACE.forEach(function (tab) {
 			deleteTabNode(tab.id);
 		}, WINDOW_ID, function(tab) {
@@ -266,7 +285,7 @@ function onStashed(groupId) {
 
 function onGroupCreated(groupId) {
 	let group = GRPINTERFACE.get(groupId);
-	if (group.stash) return;
+	if (group.stash && unstashOnTabLoad) return;
 	makeGroupNode(group);
 	let frag = document.createDocumentFragment();
 
@@ -286,7 +305,7 @@ function onGroupCreated(groupId) {
 
 	var hidden = 0;
 	for (var i = 0; i < group.index; i++) {
-		if (GRPINTERFACE.getByIndex(i).stash == true) {
+		if (GRPINTERFACE.getByIndex(i).stash == true && unstashOnTabLoad) {
 			hidden++;
 		}
 	}
