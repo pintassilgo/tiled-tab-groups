@@ -4,6 +4,7 @@ let nodes = [];
 let groupsHolder;
 let stashHolder;
 let stashTitle;
+let unstashOnTabLoad;
 let numKeyEnabled = false;
 var numKeyTargets = [];
 
@@ -25,6 +26,7 @@ async function init() {
 				appendCSSFile('css/color-light.css');
 			}
 			appendCSS(v.popup_css);
+			unstashOnTabLoad = v.unstashOnTabLoad;
 		})
 		, makeGroupNodes()
 	];
@@ -113,7 +115,7 @@ async function makeGroupNodes() {
 
 		node.addEventListener('click', async function (event) {
 			event.stopPropagation();
-			if (group.stash) {
+			if (group.stash && unstashOnTabLoad) {
 				return;
 			}
 			await bgPage.enqueueTask(async function () {
