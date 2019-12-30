@@ -319,6 +319,8 @@ async function insertShortcutOptions() {
 	const commandNames = {
 		'cycle-next-group': 'Switch to next group'
 		, 'cycle-previous-group': 'Switch to previous group'
+		, 'cycle-next-stashed-group': 'Switch to next stashed group'
+		, 'cycle-previous-stashed-group': 'Switch to previous stashed group'
 		, 'open-panorama': 'Toggle groups view'
 		, _execute_browser_action: 'Toggle popup panel'
 	}

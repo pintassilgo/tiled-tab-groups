@@ -118,7 +118,7 @@ async function mostRecentInGroup(windowId, groupId = null) {
 	return ret;
 }
 
-async function cycleGroup(offset) {
+async function cycleGroup(offset, stashed = false) {
 	let windowId = (await browser.windows.getCurrent()).id;
 	let grpIfc = WINDOWGROUPS[windowId];
 	let activeId = ACTIVEGROUP[windowId];
@@ -130,7 +130,7 @@ async function cycleGroup(offset) {
 		if (group.id == originalGroupId) {
 			break;
 		}
-	} while (group.stash);
+	} while (stashed ? !group.stash : group.stash);
 
 	await switchToGroup(windowId, group.id);
 }
@@ -466,6 +466,12 @@ async function onCommand(command) {
 		break;
 	case "cycle-previous-group":
 		await cycleGroup(-1);
+		break;
+	case "cycle-next-stashed-group":
+		await cycleGroup(1, true);
+		break;
+	case "cycle-previous-stashed-group":
+		await cycleGroup(-1, true);
 		break;
 	}
 }

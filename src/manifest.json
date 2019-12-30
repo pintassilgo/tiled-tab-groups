@@ -16,6 +16,12 @@
 		, "cycle-previous-group": {
 			"description": "Cycle to previous group"
 		}
+		, "cycle-next-stashed-group": {
+			"description": "Cycle to next stashed group"
+		}
+		, "cycle-previous-stashed-group": {
+			"description": "Cycle to previous stashed group"
+		}
 		, "open-panorama": {
 			"suggested_key": {
 				"default": "F2"
