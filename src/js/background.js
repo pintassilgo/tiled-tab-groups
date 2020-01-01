@@ -592,7 +592,6 @@ function view(windowId, fn, ...param) {
 }
 
 async function updateConfig() {
-	console.log(`Updated config`);
 	CONFIG = await browser.storage.local.get();
 }
 
@@ -606,6 +605,7 @@ async function init(cache) {
 	panoramaViewUrl = browser.runtime.getURL('view.html');
 	panoramaTabs = [];
 	await migrateSettings();
+	await updateConfig();
 	await removePanoramaViewTabs();
 	await groupOrphans();
 	await cache.forEachWindow(updateCatchRules);
