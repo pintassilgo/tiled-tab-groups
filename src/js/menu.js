@@ -130,7 +130,7 @@ function tabContextMenuAction(info, tab) {
 		}
 
 		let windowId = tab.windowId;
-		if (CACHE.getGroup(windowId, groupId).stash) {
+		if (CONFIG.unstashOnTabLoad) {
 			await setStash(windowId, groupId, false);
 		}
 

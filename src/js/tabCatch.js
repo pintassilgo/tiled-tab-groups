@@ -86,7 +86,7 @@ async function tabCatch(tab) {
 			continue;
 		}
 
-		if (group.stash == true && CONFIG.unstashOnTabLoad) {
+		if (CONFIG.unstashOnTabLoad) {
 			await setStash(tab.windowId, group.id, false);
 		}
 
