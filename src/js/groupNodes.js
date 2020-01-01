@@ -124,7 +124,7 @@ function makeGroupNode(group) {
 		event.stopPropagation();
 
 		if (group.stash) {
-			bgPage.setStash(WINDOW_ID, group.id, false);
+			bgPage.enqueueTask(bgPage.setStash, WINDOW_ID, group.id, false);
 		} else {
 			var groupUnloaded = true;
 
@@ -140,7 +140,7 @@ function makeGroupNode(group) {
 
 			if (groupUnloaded || window.confirm(`Stash group ${group.name}?\n` +
 					`Stashed groups can be retrieved from the popup panel.`)) {
-				bgPage.setStash(WINDOW_ID, group.id, true);
+				bgPage.enqueueTask(bgPage.setStash, WINDOW_ID, group.id, true);
 			}
 		}
 
