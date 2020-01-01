@@ -86,15 +86,18 @@ function menuActionMoveToWindow(info, tab) {
 async function menuActionMoveToGroup(info, tab) {
 	let ids = await menuGetSelection(tab);
 	let groupId = DYNAMIC_MAP[info.menuItemId];
-	let windowId = tab.windowId;
 
-	setGroupId(ids, groupId, tab.windowId);
-
-	if (tab.active || tab.highlighted) {
-		setActiveGroup(tab.windowId, groupId);
-	}
-
-	view(tab.windowId, "reorderGroup", groupId);
+	QUEUE.do(async () => {
+		let windowId = tab.windowId;
+		setGroupId(ids, groupId, tab.windowId);
+		if (ids.includes(CACHE.getActive(windowId).id)) {
+			if (CONFIG.unstashOnTabLoad) {
+				await setStash(windowId, groupId,  false);
+			}
+			setActiveGroup(windowId, groupId);
+		}
+		view(tab.windowId, "reorderGroup", groupId);
+	})
 }
 
 async function menuGetSelection(tab) {
