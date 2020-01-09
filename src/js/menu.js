@@ -147,7 +147,8 @@ async function initContextMenu() {
 	);
 
 	let moveToGroupSubmenu = await dynamicSubmenu(`moveToGroup`, `moveGroup`,
-		tab => WINDOWGROUPS[tab.windowId].forEach, _ => true,
+		tab => WINDOWGROUPS[tab.windowId].forEach,
+		(group, tab) => group.id != ACTIVEGROUP[tab.windowId],
 		group => group.name,
 		_ => { return {}; },
 		(group, _) => group.id,
