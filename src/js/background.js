@@ -567,6 +567,7 @@ function view(windowId, fn, ...param) {
 	try {
 		view.view[fn](...param);
 	} catch(e) {
+		console.log(e);
 		browser.tabs.remove(view.tabId);
 		delete panoramaTabs[windowId];
 	}
