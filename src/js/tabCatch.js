@@ -111,6 +111,11 @@ async function tabCatch(tab) {
 			}
 		}
 
+		await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+			type: 'move-to-end',
+			tab:  tab.id,
+		});
+
 		view(tab.windowId, `reorderGroup`, group.id);
 		break;
 	}
