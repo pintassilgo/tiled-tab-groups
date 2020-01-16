@@ -86,6 +86,10 @@ async function tabCatch(tab) {
 			continue;
 		}
 
+		if (group.id == ACTIVEGROUP[tab.windowId]) {
+			continue;
+		}
+
 		await browser.tabs.move(tab.id, {
 			index: -1,
 			windowId: tab.windowId,
