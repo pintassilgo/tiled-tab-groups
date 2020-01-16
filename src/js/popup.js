@@ -20,13 +20,22 @@ async function init() {
 	GRPIFC = TABINTERFACE.getGroupInterface(WINDOW_ID);
 
 	let promises = [
-		browser.storage.local.get().then(v => {
-			numKeyEnabled = v.use_panel_numkey || false;
-			if (v.light_theme) {
-				appendCSSFile('css/color-light.css');
+		browser.storage.local.get().then(config => {
+			numKeyEnabled = config.use_panel_numkey || false;
+			switch(config.theme) {
+				case ThemeOption.System:
+					if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+						appendCSSFile('css/color-light.css');
+					}
+					break;
+				case ThemeOption.Dark:
+					break;
+				case ThemeOption.Light:
+					appendCSSFile('css/color-light.css');
+					break;
 			}
-			appendCSS(v.popup_css);
-			unstashOnTabLoad = v.unstashOnTabLoad;
+			appendCSS(config.popup_css);
+			unstashOnTabLoad = config.unstashOnTabLoad;
 		})
 		, makeGroupNodes()
 	];
