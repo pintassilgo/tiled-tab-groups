@@ -174,7 +174,7 @@ async function initContextMenu() {
 
 	let moveToGroupSubmenu = await dynamicSubmenu(`moveToGroup`, `moveGroup`,
 		tab => WINDOWGROUPS[tab.windowId].forEach,
-		(group, tab) => group.id != ACTIVEGROUP[tab.windowId],
+		(group, tab) => group.id != CACHE.getValue(tab.id, `groupId`),
 		group => group.name,
 		_ => { return {}; },
 		(group, _) => group.id,
@@ -184,7 +184,7 @@ async function initContextMenu() {
 
 	let openInGroupSubmenu = await dynamicSubmenu(`openInGroup`, `openGroup`,
 		tab => WINDOWGROUPS[tab.windowId].forEach,
-		(group, tab) => group.id != ACTIVEGROUP[tab.windowId],
+		(group, tab) => group.id != CACHE.getValue(tab.id, `groupId`),
 		group => group.name,
 		_ => { return {}; },
 		(group, _) => group.id,
@@ -194,8 +194,6 @@ async function initContextMenu() {
 	browser.menus.onShown.addListener(function (info, tab) {
 		let changed = false;
 		if (info.contexts.includes('tab')) {
-			let changed = false;
-
 			if (VIEW_CONTEXT_SHOWN != LAST_CONTEXT) {
 				menus.forEach(id => browser.menus.update(id, { visible: VIEW_CONTEXT_SHOWN }));
 				changed = true;
