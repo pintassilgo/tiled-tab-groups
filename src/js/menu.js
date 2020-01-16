@@ -89,6 +89,12 @@ async function menuActionMoveToGroup(info, tab) {
 
 	QUEUE.do(async () => {
 		let windowId = tab.windowId;
+
+		await browser.tabs.move(ids, {
+			index: -1,
+			windowId,
+		});
+
 		setGroupId(ids, groupId, tab.windowId);
 		if (ids.includes(CACHE.getActive(windowId).id)) {
 			if (CONFIG.unstashOnTabLoad) {
@@ -96,11 +102,6 @@ async function menuActionMoveToGroup(info, tab) {
 			}
 			setActiveGroup(windowId, groupId);
 		}
-
-		await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
-			type: 'move-to-end',
-			tab:  'highlighted',
-		});
 
 		view(tab.windowId, "reorderGroup", groupId);
 	})

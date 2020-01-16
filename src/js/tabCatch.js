@@ -86,6 +86,11 @@ async function tabCatch(tab) {
 			continue;
 		}
 
+		await browser.tabs.move(tab.id, {
+			index: -1,
+			windowId: tab.windowId,
+		});
+
 		setGroupId(tab.id, group.id);
 
 		if (tab.active) {
@@ -110,11 +115,6 @@ async function tabCatch(tab) {
 					break;
 			}
 		}
-
-		await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
-			type: 'move-to-end',
-			tab:  tab.id,
-		});
 
 		view(tab.windowId, `reorderGroup`, group.id);
 		break;
