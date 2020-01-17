@@ -165,7 +165,7 @@ async function initView() {
 	manager = newGroupsManager();
 
 	window.addEventListener("beforeunload", e => {
-		bgPage.enqueueTask(bgPage.removeViewTab, TAB_ID);
+		bgPage.enqueueTask(bgPage.unregisterView, TAB_ID);
 	});
 }
 
