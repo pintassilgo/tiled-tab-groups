@@ -435,7 +435,6 @@ function createCheckbox(title, callback, value) {
 function updateSetting(k, v) {
 	let conf = {};
 	conf[k] = v;
-	console.log(conf);
 	browser.storage.local.set(conf).then(bgPage.updateConfig);
 }
 
@@ -445,6 +444,16 @@ async function init() {
 	TABINTERFACE = await bgPage.registerPopup();
 	WINDOW_ID = (await browser.windows.getCurrent()).id;
 	insertShortcutOptions();
+
+	document.getElementById(`theme-select`).appendChild(
+		createRadioMenu(`Select theme`, v => {
+			updateSetting(`theme`, v)
+		}, true, [
+			{name: `Use system preference`, value: ThemeOption.System},
+			{name: `Dark`, value: ThemeOption.Dark},
+			{name: `Light`, value: ThemeOption.Light}
+		], config.theme
+	));
 
 	document.getElementById(`tab-catch-stashed-action`).appendChild(
 		createRadioMenu(`Action to take if tab would be moved to stashed group:`, v => {
@@ -464,7 +473,6 @@ async function init() {
 
 	initInputOptionWithId('panorama_css', 'blur', 'value', '', 'panorama_css');
 	initInputOptionWithId('popup_css', 'blur', 'value', '', 'popup_css');
-	initCheckboxWithId('light_theme', 'light_theme');
 
 	initCheckboxWithId('unloadGroupOnSwitch', 'unloadGroupOnSwitch', bgPage.updateConfig);
 	initCheckboxWithId('unstashOnTabLoad', 'unstashOnTabLoad', bgPage.updateConfig);
